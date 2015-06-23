@@ -147,6 +147,6 @@ gulp.task('connect:dist', function() {
 });
 
 
-gulp.task('build', ['clean:dist', 'inject:js', 'inject:sass', 'sass']);
+gulp.task('build', ['clean:dist', 'inject:js', 'inject:sass', 'sass', 'usemin']);
 gulp.task('serve', ['clean:tmp', 'inject:js', 'inject:sass', 'sass', 'connect', 'watch']);
 gulp.task('serve:dist', ['build', 'connect:dist']);
