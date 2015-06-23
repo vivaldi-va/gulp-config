@@ -1,0 +1,20 @@
+{
+  "name": "gulp-usemin-test",
+  "version": "0.0.0",
+  "homepage": "https://github.com/vivaldi-va/gulp-config",
+  "authors": [
+    "zaccary.price <wildtangomedia@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "normalize-scss": "~3.0.3"
+  }
+}

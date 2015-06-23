@@ -1,6 +1,12 @@
 
+// bower:scss
+@import "../../bower_components/normalize-scss/_normalize.scss";
+// endbower
+
 // inject:scss
-@import "_additional.scss";
-@import "_test.scss";
-@import "_watch.scss";
+@import "additional";
+@import "test";
+@import "watch";
+@import "awesome.file-bro";
+@import "elements/anexcellent.element";
 // endinject

@@ -15,6 +15,7 @@ var rev			= require('gulp-rev');
 var path			= require('path');
 var del			= require('del');
 var vinylPaths		= require('vinyl-paths');
+var wiredep		= require('wiredep').stream;
 
 
 // configuration
@@ -94,8 +95,20 @@ gulp.task('inject:sass', function() {
 		.pipe(gulp.dest(paths.src + '/styles'));
 });
 
+gulp.task('bower:html', function () {
+	gulp.src(path.join(paths.src, 'index.html'))
+		.pipe(wiredep())
+		.pipe(gulp.dest(paths.src));
+});
+gulp.task('bower:sass', function () {
+	gulp.src(path.join(paths.src, 'styles/main.scss'))
+		.pipe(wiredep())
+		.pipe(gulp.dest(path.join(paths.src, 'styles/')));
+});
+
 // watch for file changes and run injection and processing
 gulp.task('watch', function() {
+	gulp.watch('bower.json', ['bower:html', 'bower:sass']);
 	gulp.watch(path.join(paths.src, 'scripts/**/*.js'), ['inject:js']);
 	gulp.watch(path.join(paths.src, 'styles/**/*.scss'), ['inject:sass', 'sass']);
 });
