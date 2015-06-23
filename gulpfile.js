@@ -67,26 +67,34 @@ gulp.task('inject:js', function() {
 // main.scss
 gulp.task('inject:sass', function() {
 	var target = gulp.src([path.join(paths.src, "/styles/main.scss")]);
-	var sources = [path.join(paths.src, "/styles/**/*.scss"), "!" + path.join(paths.src, "/styles/main.scss")];
+	var sources = [
+		path.join(paths.src, "/styles/**/*.scss"),
+		"!" + path.join(paths.src, "/styles/main.scss")
+	];
+
 	var opts = {
 		read: false,
 		starttag: '// inject:{{ext}}',
 		endtag: '// endinject',
 		transform: function (filePath) {
 			filePath = filePath.replace('/' + paths.src + '/styles/', '');
+			filePath = filePath.replace(/((\w+\/)*)_?([\w\.\-_]+)\.(sass|scss)/, "$1$3");
 			return '@import "' + filePath + '";';
 		}
 	};
 
 	target
 		.pipe(inject(gulp.src(sources), opts))
-		.pipe(gulp.dest(paths.src + '/'));
+		.pipe(gulp.dest(paths.src + '/styles'));
 });
 
 // watch for file changes and run injection and processing
 gulp.task('watch', function() {
-	gulp.watch(path.join(paths.src, '/scripts/**/*.js'), ['inject:js']);
-	gulp.watch(path.join(paths.src, '/styles/**/*.scss'), ['inject:sass', 'sass']);
+
+	console.log(path.join(paths.src, 'styles/**/*.scss'));
+
+	gulp.watch(path.join(paths.src, 'scripts/**/*.js'), ['inject:js']);
+	gulp.watch(path.join(paths.src, 'styles/**/*.scss'), ['inject:sass', 'sass']);
 });
 
 
@@ -113,7 +121,16 @@ gulp.task('connect', function() {
 	});
 });
 
+// run local server with root at <dist>
+// to emulate production server
+gulp.task('connect:dist', function() {
+	connect.server({
+		root: paths.dist,
+		port: 9091
+	});
+});
 
-gulp.task('serve', ['clean:tmp', 'inject:js', 'inject:sass', 'sass', 'connect']);
 
 gulp.task('build', ['clean:dist', 'inject:js', 'inject:sass', 'sass', 'usemin']);
+gulp.task('serve', ['clean:tmp', 'inject:js', 'inject:sass', 'sass', 'connect', 'watch']);
+gulp.task('serve:dist', ['build', 'connect:dist']);
