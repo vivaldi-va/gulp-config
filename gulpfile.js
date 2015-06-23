@@ -16,38 +16,45 @@ var path			= require('path');
 var del			= require('del');
 var vinylPaths		= require('vinyl-paths');
 
+
+// configuration
+var ports = {
+	dev: 9090,
+	dist: 9091
+};
+
 var paths = {
 	src: 'src',
 	dist: 'dist',
 	tmp: '.tmp'
 };
 
-// clean <.tmp> directory
+// clean <tmp> directory
 gulp.task('clean:tmp', function() {
-	return gulp.src('.tmp/*')
+	return gulp.src(path.join(paths.tmp, '*'))
 		.pipe(vinylPaths(del));
 });
 
 // clean <dist> directory
 gulp.task('clean:dist', function() {
-	return gulp.src(path.join(paths.dist, '/*'))
+	return gulp.src(path.join(paths.dist, '*'))
 		.pipe(vinylPaths(del));
 });
 
 // compile sass/scss files and run autoprefixer on processed css
 gulp.task('sass', function() {
-	gulp.src([path.join(paths.src, '/styles/main.scss'), '!node_modules/**/*.scss'])
+	gulp.src([path.join(paths.src, 'styles/main.scss'), '!node_modules/**/*.scss'])
 		.pipe(sass().on('error', sass.logError))
 		.pipe(autoprefixer())
-		.pipe(gulp.dest('.tmp/styles/'));
+		.pipe(gulp.dest(path.join(paths.tmp, 'styles/')));
 });
 
 
-// inject javascript files into inject:js block
-// in index.html
+// inject javascript files into inject:js
+// block in index.html
 gulp.task('inject:js', function() {
-	var target = gulp.src(path.join(paths.src, "/index.html"));
-	var sources = [path.join(paths.src, "/scripts/**/*.js")];
+	var target = gulp.src(path.join(paths.src, "index.html"));
+	var sources = [path.join(paths.src, "scripts/**/*.js")];
 
 	var opts = {
 		read: false,
@@ -63,8 +70,7 @@ gulp.task('inject:js', function() {
 		.pipe(gulp.dest(path.join(paths.src, '/')));
 });
 
-// inject scss files into `// inject:scss` block in
-// main.scss
+// inject scss files into `// inject:scss` block in main.scss
 gulp.task('inject:sass', function() {
 	var target = gulp.src([path.join(paths.src, "/styles/main.scss")]);
 	var sources = [
@@ -90,9 +96,6 @@ gulp.task('inject:sass', function() {
 
 // watch for file changes and run injection and processing
 gulp.task('watch', function() {
-
-	console.log(path.join(paths.src, 'styles/**/*.scss'));
-
 	gulp.watch(path.join(paths.src, 'scripts/**/*.js'), ['inject:js']);
 	gulp.watch(path.join(paths.src, 'styles/**/*.scss'), ['inject:sass', 'sass']);
 });
@@ -117,7 +120,7 @@ gulp.task('usemin', function() {
 gulp.task('connect', function() {
 	connect.server({
 		root: [paths.src, paths.tmp],
-		port: 9090
+		port: ports.dev
 	});
 });
 
@@ -126,11 +129,11 @@ gulp.task('connect', function() {
 gulp.task('connect:dist', function() {
 	connect.server({
 		root: paths.dist,
-		port: 9091
+		port: ports.dist
 	});
 });
 
 
-gulp.task('build', ['clean:dist', 'inject:js', 'inject:sass', 'sass', 'usemin']);
+gulp.task('build', ['clean:dist', 'inject:js', 'inject:sass', 'sass']);
 gulp.task('serve', ['clean:tmp', 'inject:js', 'inject:sass', 'sass', 'connect', 'watch']);
 gulp.task('serve:dist', ['build', 'connect:dist']);
