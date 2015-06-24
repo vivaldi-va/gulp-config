@@ -85,7 +85,7 @@ gulp.task('inject:sass', function() {
 		endtag: '// endinject',
 		transform: function (filePath) {
 			filePath = filePath.replace('/' + paths.src + '/styles/', '');
-			filePath = filePath.replace(/((\w+\/)*)_?([\w\.\-_]+)\.(sass|scss)/, "$1$3");
+			filePath = filePath.replace(/([\w\/]*?)_?([\w\.\-]+?)\.(sass|scss)/, "$1$3");
 			return '@import "' + filePath + '";';
 		}
 	};
